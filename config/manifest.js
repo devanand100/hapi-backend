@@ -131,6 +131,7 @@ plugins = plugins.concat([
 
 const routesOb = {
   'auth.route': 'auth',
+  'image.route': '',
 };
 
 const routes = Object.keys(routesOb);

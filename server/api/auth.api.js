@@ -7,8 +7,10 @@ const Bcrypt = require('bcrypt');
 const NodeMailer = require('nodemailer');
 const errorHelper = require('utilities/error-helper');
 const Token = require('utilities/create-token');
+const _fileHandler = require('utilities/file-upload');
 const User = require('models/user.model').schema;
 const userRole = require('models/userRole.model').schema;
+const path = require('path');
 module.exports = {
   login: {
     validate: {
@@ -81,7 +83,7 @@ module.exports = {
       response = {
         user: request.pre.user,
         accessToken,
-        expiresIn:config.constants.EXPIRATION_PERIOD
+        expiresIn: config.constants.EXPIRATION_PERIOD,
       };
       return h.response(response).code(200);
     },
@@ -91,10 +93,10 @@ module.exports = {
       payload: Joi.object().keys({
         email: Joi.string().email().required().trim().label('Email'),
         password: Joi.string().required().trim().label('Password'),
-        gender:Joi.string().required().label('gender'),
-        firstName:Joi.string().required().label('FirstName'), 
-        lastName:Joi.string().required().label("LastName"), 
-        bloodGroup:Joi.string()
+        gender: Joi.string().required().label('gender'),
+        firstName: Joi.string().required().label('FirstName'),
+        lastName: Joi.string().required().label('LastName'),
+        bloodGroup: Joi.string().allow(''),
       }),
     },
     pre: [
@@ -205,7 +207,6 @@ module.exports = {
       {
         assign: 'user',
         method: async (request, h) => {
-
           const user = await User.findOne({ email: request.payload.email });
 
           if (!user) {
@@ -217,29 +218,28 @@ module.exports = {
       {
         assign: 'accessToken',
         method: async (request, h) => {
-          const user = {id:request.pre.user._id}
-          return Token({user}, 15*60);
+          const user = { id: request.pre.user._id };
+          return Token({ user }, 15 * 60);
         },
       },
       {
         assign: 'mailSender',
         method: async (request, h) => {
-          try{
-          const transport = NodeMailer.createTransport({
-           
-            host: 'smtp.gmail.com',
-            sender:true ,
-            auth: {
-              user:"devanand.kariya@techivies.com",
-              pass: 'Qazwsxed#108',
-            },
-          });
-          const info = await transport.sendMail({
-            from:"devanand.kariya@techivies.com" ,
-            to: request.pre.user.email,
-            subject: 'Hello ✔', 
-            text: 'Hello world?', 
-            html: ` <!DOCTYPE html>
+          try {
+            const transport = NodeMailer.createTransport({
+              host: 'smtp.gmail.com',
+              sender: true,
+              auth: {
+                user: 'devanand.kariya@techivies.com',
+                pass: 'Qazwsxed#108',
+              },
+            });
+            const info = await transport.sendMail({
+              from: 'devanand.kariya@techivies.com',
+              to: request.pre.user.email,
+              subject: 'Hello ✔',
+              text: 'Hello world?',
+              html: ` <!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
@@ -304,19 +304,17 @@ module.exports = {
                 </div>
             </body>
             </html>
-            `, 
-          });
-         
-          return info
-        }catch(error){
-          
-          errorHelper.handleError(Boom.badRequest(error.message))
-        }
+            `,
+            });
+
+            return info;
+          } catch (error) {
+            errorHelper.handleError(Boom.badRequest(error.message));
+          }
         },
       },
     ],
     handler: async (request, h) => {
-     
       return {
         redirectTo: 'new-password',
         id: request.pre.user._id,
@@ -334,7 +332,6 @@ module.exports = {
       {
         assign: 'updates',
         method: async (request, h) => {
-          
           const id = request.auth.credentials.user;
           const hashPassword = Bcrypt.hashSync(request.payload.password, 10);
           const { n, ok } = await User.updateOne(
@@ -368,23 +365,60 @@ module.exports = {
       const user = await userService.getUserById(
         request.auth.credentials.user._id,
       );
-       
+
       return h.response(user);
     },
   },
-  updateUser :{
-    pre:[
-      { assign:"imageUrl" , method: async (request , h)=>{
-        // console.log("payload",request.payload);
-        console.log("..............",__dirname);
-        return "dasf";
-      }}
+  updateUser: {
+    pre: [
+      {
+        assign: 'imageUrl',
+        method: async (request, h) => {
+          try {
+            if (typeof request.payload.image === 'object') {
+              const fileHandlerResponse = await _fileHandler(
+                request.payload.image,
+                {
+                  dest: path.join(__dirname + '/../../' + 'images/'),
+                },
+              );
+              const filename = fileHandlerResponse.filename;
+              const host = request.info.host;
+              const protocol = request.server.info.protocol;
+              delete request.payload.image;
+              return `${protocol}://${host}/v1/images/${filename}`;
+            }
+            return request.payload?.image || '';
+          } catch (error) {
+            errorHelper.handleError(Boom.expectationFailed(error.message));
+          }
+        },
+      },
     ],
-    handler: async(request , h) =>{
-      return {message:"Success"}
-    }
-  } 
- 
+    handler: async (request, h) => {
+      try {
+        if (request.pre?.imageUrl) {
+          request.payload.image = request.pre.imageUrl;
+        }
+        if (request.payload?.password) {
+          request.payload.password = Bcrypt.hashSync(
+            request.payload.password,
+            10,
+          );
+        }
+        const id = request.auth.credentials.user._id;
+        console.log('id.........', id);
+        const updates = await User.updateOne({ _id: id }, request.payload);
+        console.log('updates.....', updates);
+        if (!updates?.ok) {
+          return Boom.badRequest('profile update failed');
+        }
+        return { message: 'profile updated Successfully' };
+      } catch (error) {
+        errorHelper.handleError(Boom.expectationFailed(error.message));
+      }
+    },
+  },
 };
 
 async function uniqueMailVerify(request, h) {
@@ -404,7 +438,6 @@ async function uniqueMailVerify(request, h) {
 }
 
 async function createUser(request, h) {
- 
   let userPayload = request.payload;
   try {
     let createdUser = await User.create(userPayload);

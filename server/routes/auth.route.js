@@ -29,7 +29,7 @@ module.exports = {
             plugins: {
               policies: ['log.policy'],
             },
-            
+
             tags: ['api', 'Authentication'],
             description: 'Signup',
             notes: 'Signup',
@@ -39,14 +39,14 @@ module.exports = {
           },
         },
         {
-          method:"PATCH" , 
-          path:"/update-profile",
-          options:{
-            auth:"auth",
-            payload:{
+          method: 'PATCH',
+          path: '/update-profile',
+          options: {
+            auth: 'auth',
+            payload: {
               parse: true,
               multipart: {
-                     output: 'stream'
+                output: 'stream',
               },
               maxBytes: 1000 * 1000 * 50,
             },
@@ -61,12 +61,12 @@ module.exports = {
               },
             },
             tags: ['api', 'Authentication'],
-          description: 'profile update',
-          pre: API.updateUser.pre,
-          handler: API.updateUser.handler,
+            description: 'profile update',
+            pre: API.updateUser.pre,
+            handler: API.updateUser.handler,
           },
         },
-       
+
         {
           method: 'POST',
           path: '/admin/signUp',
@@ -195,7 +195,7 @@ module.exports = {
           method: 'POST',
           path: '/set-password',
           options: {
-            auth: "auth",
+            auth: 'auth',
             plugins: {
               policies: ['log.policy'],
               'hapi-swagger': {

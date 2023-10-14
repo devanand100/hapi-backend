@@ -42,17 +42,18 @@ module.exports.plugin = {
 
       // adding roles and users
       const UserRole = require('models/userRole.model').schema;
-      const User = require('models/user.model').schema
+      // const User = require('models/user.model').schema
       const userRoles = await UserRole.find({});
 
-
-      if(userRoles.length === 0){
-        await UserRole.insertMany([{role:"SUPERADMIN"}, {role:"ADMIN"} , {role:"USER"}])
-        await User.create({email:"admin@gmail.com",password:"12345", role:"ADMIN"} )
-        await User.create({email:"superadmin@gmail.com",password:"12345", role:"SUPERADMIN"})
+      if (userRoles.length === 0) {
+        await UserRole.insertMany([
+          { role: 'SUPERADMIN' },
+          { role: 'ADMIN' },
+          { role: 'USER' },
+        ]);
+        //   await User.create({email:"admin@gmail.com",password:"12345", role:"ADMIN"} )
+        //   await User.create({email:"superadmin@gmail.com",password:"12345", role:"SUPERADMIN"})
       }
-
-
     } catch (err) {
       console.log(err);
       throw err;
