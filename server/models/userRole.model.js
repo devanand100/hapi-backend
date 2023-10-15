@@ -20,10 +20,10 @@ const dbConn = require('plugins/mongoose.plugin').plugin.dbConn();
 
 const UserRoleSchema = new Schema(
   {
-    role :{
-      type:Types.String,
-      required:true
-    }
+    role: {
+      type: Types.String,
+      required: true,
+    },
   },
   {
     collection: modelName,
@@ -31,8 +31,5 @@ const UserRoleSchema = new Schema(
     versionKey: false,
   },
 );
-
-
-
 
 module.exports.schema = dbConn.model(modelName, UserRoleSchema);

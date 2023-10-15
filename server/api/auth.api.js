@@ -66,7 +66,6 @@ module.exports = {
           } catch (err) {
             errorHelper.handleError(err);
           }
-
           return h.continue;
         },
       },
@@ -113,6 +112,9 @@ module.exports = {
       return h.response(request.pre.signup).code(201);
     },
   },
+  // loginWithMail: {
+  //   validate: Joi.object({}),
+  // },
   adminSignUp: {
     validate: {
       payload: Joi.object({

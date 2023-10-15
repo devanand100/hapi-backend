@@ -20,13 +20,13 @@ const dbConn = require('plugins/mongoose.plugin').plugin.dbConn();
 
 const UserSchema = new Schema(
   {
-    firstName:{
-      type:Types.String , 
-      required:true ,
+    firstName: {
+      type: Types.String,
+      // required:true ,
     },
-    lastName:{
-      type:Types.String , 
-      required:true ,
+    lastName: {
+      type: Types.String,
+      // required:true ,
     },
     email: {
       type: Types.String,
@@ -36,35 +36,31 @@ const UserSchema = new Schema(
       stringType: 'email',
       canSearch: true,
     },
-    lastName:{
-      type:Types.String , 
-      required:true ,
+    bloodGroup: {
+      type: Types.String,
     },
-    bloodGroup:{
-      type:Types.String ,
-    } ,
-    gender:{
-      type:Types.String , 
-      required:true ,
+    gender: {
+      type: Types.String,
+      // required:true ,
     },
-    image:{
-      type:Types.String,
+    image: {
+      type: Types.String,
     },
     password: {
       type: Types.String,
       exclude: true,
-      required: true,
+      // required: true,
     },
-    role :{
-      type:Types.String,
-      ref:"userRole" , 
-      default:"USER"
-    } ,
-    createdBy :{
-      type:Types.String ,
+    role: {
+      type: Types.String,
+      ref: 'userRole',
+      default: 'USER',
+    },
+    createdBy: {
+      type: Types.String,
       stringType: 'email',
       canSearch: true,
-    }
+    },
   },
   {
     collection: modelName,
@@ -114,10 +110,9 @@ UserSchema.statics = {
       };
 
       const schema = Joi.object({
-        username:Joi.string().email().required()
-      })
-      const emailValidate = schema.validate({username})
-     
+        username: Joi.string().email().required(),
+      });
+      const emailValidate = schema.validate({ username });
 
       // if (emailValidate.error) {
       //   query = {
@@ -136,7 +131,7 @@ UserSchema.statics = {
       const source = user.password;
 
       let passwordMatch = await Bcrypt.compare(password, source);
-      
+
       if (passwordMatch) {
         return user;
       }
