@@ -112,9 +112,9 @@ module.exports = {
       return h.response(request.pre.signup).code(201);
     },
   },
-  // loginWithMail: {
-  //   validate: Joi.object({}),
-  // },
+  loginWithMail: {
+    validate: Joi.object({}),
+  },
   adminSignUp: {
     validate: {
       payload: Joi.object({

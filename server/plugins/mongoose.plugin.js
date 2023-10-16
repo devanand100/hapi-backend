@@ -42,15 +42,62 @@ module.exports.plugin = {
 
       // adding roles and users
       const UserRole = require('models/userRole.model').schema;
+      const Doctor = require('models/doctor.model').schema
       // const User = require('models/user.model').schema
       const userRoles = await UserRole.find({});
-
+      const doctors = await Doctor.find({});
+      
+      if(doctors.length === 0){
+        await Doctor.insertMany( [
+          {
+            name: 'Dr. John Smith',
+            speciality: 'Cardiologist',
+          },
+          {
+            name: 'Dr. Sarah Johnson',
+            speciality: 'Pediatrician',
+          },
+          {
+            name: 'Dr. Michael Brown',
+            speciality: 'Orthopedic Surgeon',
+          },
+          {
+            name: 'Dr. Lisa Davis',
+            speciality: 'Dermatologist',
+          },
+          {
+            name: 'Dr. Robert Lee',
+            speciality: 'Oncologist',
+          },
+          {
+            name: 'Dr. Emily White',
+            speciality: 'Neurologist',
+          },
+          {
+            name: 'Dr. Maria Garcia',
+            speciality: 'Gynecologist',
+          },
+          {
+            name: 'Dr. William Clark',
+            speciality: 'General Practitioner',
+          },
+          {
+            name: 'Dr. Jennifer Adams',
+            speciality: 'Psychiatrist',
+          },
+          {
+            name: 'Dr. Daniel Turner',
+            speciality: 'Dentist',
+          },
+        ])
+      }
       if (userRoles.length === 0) {
         await UserRole.insertMany([
           { role: 'SUPERADMIN' },
           { role: 'ADMIN' },
           { role: 'USER' },
         ]);
+        
         //   await User.create({email:"admin@gmail.com",password:"12345", role:"ADMIN"} )
         //   await User.create({email:"superadmin@gmail.com",password:"12345", role:"SUPERADMIN"})
       }
