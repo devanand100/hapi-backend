@@ -4,8 +4,7 @@ let Boom = require('@hapi/boom');
 function handleError(err) {
   if (err.isBoom) {
     throw err;
-  } else {
-    console.error(err);
+  }else {
     throw Boom.badImplementation(err);
   }
 }

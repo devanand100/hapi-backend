@@ -26,9 +26,8 @@ const Pin = new Schema(
       type: Types.Date,
       required: true,
     },
-    userId: {
-      type: Types.ObjectId,
-      ref: 'user',
+    email: {
+      type: Types.String,
     },
   },
   {
