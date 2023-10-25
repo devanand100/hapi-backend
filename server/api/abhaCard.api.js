@@ -91,7 +91,7 @@ module.exports = {
               sender: true,
               auth: {
                 user: 'devanand.kariya@techivies.com',
-                pass: 'Qazwsxed#108',
+                pass: '******',
               },
             });
             const info = await transport.sendMail({
