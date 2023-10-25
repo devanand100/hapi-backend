@@ -24,6 +24,7 @@ const startServer = async () => {
     });
 
     await server.start();
+    require('./server/utilities/cleanUpService')
     console.log(`Server listening on ${server.info.uri}`);
   } catch (err) {
     console.error(err);

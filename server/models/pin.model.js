@@ -58,7 +58,7 @@ Pin.statics.verifyPin = async function (id, pin) {
     if (usersPin.expires < new Date()) {
       return { valid: false, message: 'Pin expired' };
     }
-    console.log('//////////////////////////////////////', usersPin.pin, pin);
+   
     if (usersPin.pin === pin) {
       return { valid: true, message: 'pin is Valid' };
     }

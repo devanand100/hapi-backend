@@ -16,8 +16,7 @@ module.exports = {
       assign:"card" , 
       method: async (request,h) => {
         try{
-          const card = await Abha.findOne({ user: request.auth.credentials.user._id })
-
+          const  card = await Abha.findOne({ user: request.auth.credentials.user._id })
         if(!card){
           const card  = await Abha.create({ number:new Date().getTime() ,user:request.auth.credentials.user._id })
           return card
@@ -92,7 +91,7 @@ module.exports = {
               sender: true,
               auth: {
                 user: 'devanand.kariya@techivies.com',
-                pass: '*******',
+                pass: 'Qazwsxed#108',
               },
             });
             const info = await transport.sendMail({
@@ -130,7 +129,7 @@ module.exports = {
         assign: 'isOtpValid',
         method: async (request, h) => {
           const usersPin = await Pin.findOne({ email: request.payload.email });
-
+          
           if (!usersPin) {
             errorHelper.handleError(Boom.badRequest('pin not found'));
           }

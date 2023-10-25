@@ -409,9 +409,9 @@ module.exports = {
           );
         }
         const id = request.auth.credentials.user._id;
-        console.log('id.........', id);
+       
         const updates = await User.updateOne({ _id: id }, request.payload);
-        console.log('updates.....', updates);
+       
         if (!updates?.ok) {
           return Boom.badRequest('profile update failed');
         }
